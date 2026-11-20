@@ -18,7 +18,7 @@ mousemallow is a small macOS menu bar app that dresses up your cursor. It puts a
 - Ripples on click, leans into turns, and can fade out when the mouse sits still.
 - Comes with seven themes in the mousemallow palette, plus a theme with your own two colors.
 
-Everything lives in the menu bar icon. Pick **Settings…** for the full list of options.
+Opening the app shows its Settings window. After you close it, the app keeps running in the menu bar: click the icon for quick toggles, or open the app again to get the window back.
 
 ## Install
 
@@ -42,7 +42,7 @@ cd mousemallow
 open build/mousemallow.app
 ```
 
-To keep it, drag `build/mousemallow.app` into your Applications folder, then turn on **Open at login** in Settings.
+To build and install in one step, run `./build.sh install`. It replaces the copy in Applications and removes the one in `build/`, so you don't end up with two. Then turn on **Open at login** in Settings.
 
 mousemallow doesn't ask for any permissions and makes no network requests.
 

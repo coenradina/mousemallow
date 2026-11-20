@@ -31,3 +31,14 @@ cp Info.plist "$APP/Contents/Info.plist"
 cp Resources/Sniglet-Regular.ttf Resources/OFL.txt "$APP/Contents/Resources/"
 codesign --force --sign - "$APP" >/dev/null
 echo "Built: $PWD/$APP"
+
+# ./build.sh install: replace the copy in /Applications and remove the build copy,
+# so Spotlight and Launchpad show only one mousemallow.
+if [[ "${1:-}" == "install" ]]; then
+  pkill -x mousemallow || true
+  rm -rf /Applications/mousemallow.app
+  ditto "$APP" /Applications/mousemallow.app
+  rm -rf "$APP"
+  echo "Installed: /Applications/mousemallow.app"
+  open /Applications/mousemallow.app
+fi

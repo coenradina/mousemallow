@@ -1124,7 +1124,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var bag = Set<AnyCancellable>()
     var applyPending = false
 
+    static let showSettingsNote = Notification.Name("app.mousemallow.showSettings")
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Only one copy runs at a time. A second launch (from another folder, say)
+        // asks the running copy to show its window, then quits.
+        let me = NSRunningApplication.current
+        if let bundleID = Bundle.main.bundleIdentifier,
+           NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+               .contains(where: { $0.processIdentifier != me.processIdentifier }) {
+            DistributedNotificationCenter.default().postNotificationName(
+                Self.showSettingsNote, object: nil, userInfo: nil, deliverImmediately: true)
+            NSApp.terminate(nil)
+            return
+        }
+        DistributedNotificationCenter.default().addObserver(
+            self, selector: #selector(openSettings), name: Self.showSettingsNote, object: nil)
+
         installMainMenu()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.button?.image = MouseMark.image(size: 18, style: .menuBar)
@@ -1142,10 +1158,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             .sink { [weak self] _ in self?.scheduleApply() }
             .store(in: &bag)
 
-        if !UserDefaults.standard.bool(forKey: "didOnboard") {
-            UserDefaults.standard.set(true, forKey: "didOnboard")
+        // Show the window when the user opens the app, but not when it starts at login.
+        if !launchedAtLogin {
             openSettings()
         }
+    }
+
+    private var launchedAtLogin: Bool {
+        guard let event = NSAppleEventManager.shared().currentAppleEvent,
+              event.eventID == kAEOpenApplication else { return false }
+        return event.paramDescriptor(forKeyword: keyAEPropData)?.enumCodeValue == keyAELaunchedAsLogInItem
+    }
+
+    /// Opening the app while it's already running (Finder, Launchpad, Spotlight) shows the window.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        openSettings()
+        return false
     }
 
     func scheduleApply() {
