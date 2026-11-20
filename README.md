@@ -22,7 +22,18 @@ Everything lives in the menu bar icon. Pick **Settings…** for the full list of
 
 ## Install
 
-You need macOS 14 or later (Apple silicon or Intel) and the Xcode Command Line Tools (`xcode-select --install`).
+You need macOS 14 or later, on Apple silicon or Intel.
+
+### Download
+
+1. Download `mousemallow.zip` from the [latest release](https://github.com/coenradina/mousemallow/releases/latest) and unzip it.
+2. Drag `mousemallow.app` into your Applications folder and open it.
+3. macOS will say it can't check the app for malware, because the app isn't notarized by Apple. Click **Done**, then open **System Settings → Privacy & Security**, scroll down, and click **Open Anyway** next to mousemallow. You only need to do this once.
+4. To start it with your Mac, turn on **Open at login** in the app's Settings.
+
+### Build from source
+
+You need the Xcode Command Line Tools (`xcode-select --install`).
 
 ```sh
 git clone https://github.com/coenradina/mousemallow.git
