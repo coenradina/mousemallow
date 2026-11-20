@@ -28,5 +28,6 @@ done
 iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
 
 cp Info.plist "$APP/Contents/Info.plist"
+cp Resources/Sniglet-Regular.ttf Resources/OFL.txt "$APP/Contents/Resources/"
 codesign --force --sign - "$APP" >/dev/null
 echo "Built: $PWD/$APP"

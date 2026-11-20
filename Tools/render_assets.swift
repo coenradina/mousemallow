@@ -4,6 +4,7 @@
 //   icon_1024.png   app icon source
 //   menubar.png     the menu bar icon at 8x, for checking
 // Build: swiftc -parse-as-library Sources/Brand.swift Tools/render_assets.swift -o render_assets
+// Run from the repo root (it reads Resources/Sniglet-Regular.ttf): ./render_assets assets
 
 import AppKit
 
@@ -27,26 +28,6 @@ func save(_ rep: NSBitmapImageRep, _ path: String) {
 func roundedFont(_ size: CGFloat, _ weight: NSFont.Weight) -> NSFont {
     let base = NSFont.systemFont(ofSize: size, weight: weight)
     return NSFont(descriptor: base.fontDescriptor.withDesign(.rounded) ?? base.fontDescriptor, size: size) ?? base
-}
-
-/// Draws "mousemallow" centered on `centerX` with a sparkle cut out of the first "o".
-func drawWordmark(_ ctx: CGContext, centerX: CGFloat, baseline: CGFloat, size: CGFloat, background: NSColor) {
-    let font = roundedFont(size, .bold)
-    let kern = size * 0.01
-    let str = NSAttributedString(string: "mousemallow",
-                                 attributes: [.font: font, .foregroundColor: Brand.ink, .kern: kern])
-    let line = CTLineCreateWithAttributedString(str)
-    let width = CGFloat(CTLineGetTypographicBounds(line, nil, nil, nil))
-    let x0 = centerX - width / 2
-    ctx.textPosition = CGPoint(x: x0, y: baseline)
-    CTLineDraw(line, ctx)
-
-    let a = CTLineGetOffsetForStringIndex(line, 1, nil)
-    let b = CTLineGetOffsetForStringIndex(line, 2, nil)
-    let c = CGPoint(x: x0 + (a + b - kern) / 2, y: baseline + font.xHeight / 2)
-    ctx.setFillColor(background.cgColor)
-    ctx.addPath(Brand.sparkle(center: c, radius: font.xHeight * 0.4, plump: 0.3))
-    ctx.fillPath()
 }
 
 func drawText(_ s: String, centerX: CGFloat, y: CGFloat, size: CGFloat, weight: NSFont.Weight,
@@ -129,13 +110,18 @@ func drawCursorPreview(_ ctx: CGContext, center c: CGPoint, scale s: CGFloat,
 struct BrandTool {
     static func main() {
         let out = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "assets"
+        let font = URL(fileURLWithPath: "Resources/Sniglet-Regular.ttf")
+        guard FileManager.default.fileExists(atPath: font.path) else {
+            fatalError("Run from the repo root: Resources/Sniglet-Regular.ttf not found")
+        }
+        Wordmark.fontURL = font
 
         // Logo: 1536 × 1024 card, same layout as the sketch.
         save(bitmap(1536, 1024) { ctx in
             ctx.setFillColor(Brand.marshmallow.cgColor)
             ctx.fill(CGRect(x: 0, y: 0, width: 1536, height: 1024))
-            MouseMark.draw(in: ctx, rect: CGRect(x: 568, y: 360, width: 400, height: 460))
-            drawWordmark(ctx, centerX: 768, baseline: 210, size: 150, background: Brand.marshmallow)
+            MouseMark.draw(in: ctx, rect: CGRect(x: 568, y: 340, width: 400, height: 470))
+            Wordmark.draw(in: ctx, centerX: 768, baseline: 200, size: 175)
         }, "\(out)/logo.png")
 
         save(bitmap(512, 512) { ctx in
@@ -161,7 +147,7 @@ struct BrandTool {
                                   locations: [0, 1])!
             ctx.drawLinearGradient(grad, start: CGPoint(x: 0, y: 924), end: CGPoint(x: 0, y: 100), options: [])
             ctx.restoreGState()
-            MouseMark.draw(in: ctx, rect: CGRect(x: 222, y: 200, width: 580, height: 620))
+            MouseMark.draw(in: ctx, rect: CGRect(x: 190, y: 180, width: 660, height: 680))
         }, "\(out)/icon_1024.png")
 
         // Palette swatches.

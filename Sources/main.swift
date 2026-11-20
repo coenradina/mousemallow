@@ -1003,6 +1003,7 @@ struct SettingsView: View {
     @State private var loginOn = SMAppService.mainApp.status == .enabled
     @State private var loginNote: String?
     private let logo = MouseMark.image(size: 72)
+    private let wordmark = Wordmark.image(size: 30)
 
     var body: some View {
         ScrollView {
@@ -1010,7 +1011,7 @@ struct SettingsView: View {
                 HStack(spacing: 12) {
                     Image(nsImage: logo)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text("mousemallow").font(.system(size: 26, weight: .bold, design: .rounded))
+                        Image(nsImage: wordmark).accessibilityLabel("mousemallow")
                         Text("make your cursor a little cuter ♡")
                             .font(.system(.callout, design: .rounded)).foregroundStyle(Color.ink.opacity(0.65))
                     }

@@ -44,7 +44,8 @@ The summon shortcut is a Carbon global hotkey, and the jump uses `CGWarpMouseCur
 | File | What's in it |
 | --- | --- |
 | `Sources/main.swift` | The app: overlay, themes, settings window, menu bar menu |
-| `Sources/Brand.swift` | Palette colors and the logo mark, drawn in code |
+| `Sources/Brand.swift` | Palette colors, the logo mark and the wordmark, drawn in code |
+| `Resources/` | The Sniglet font for the wordmark, and its license |
 | `Tools/render_assets.swift` | Draws everything in `assets/` (logo, app icon, previews) |
 | `build.sh` | Compiles a universal app and regenerates `assets/` |
 
@@ -63,3 +64,5 @@ The summon shortcut is a Carbon global hotkey, and the jump uses `CGWarpMouseCur
 ## License
 
 [MIT](LICENSE)
+
+The wordmark uses [Sniglet](https://fonts.google.com/specimen/Sniglet) by Haley Fiege, under the [SIL Open Font License 1.1](Resources/OFL.txt). The app bundles the font file unchanged. The round "w" and the thicker strokes are drawn in code.
